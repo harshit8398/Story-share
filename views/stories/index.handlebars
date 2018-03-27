@@ -9,8 +9,8 @@
                     {{/if}}
                 </div>
                 <div class="card-content center-align">
-                    <h5>{{truncate title 20}}</h5>
-                    <p class="story-text">{{stripTags (truncate body 150)}}</p>
+                    <h5>{{truncate title 15}}</h5>
+                    <p class="story-text">{{ stripTags (truncate body 100)}}</p>
                     <br>
                     <div class="chip">
                         <img src="{{user.image}}">
