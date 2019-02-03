@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 // Create Shema
 const StorySchema = new Schema({
+    likes:{
+        type:Number,
+        default: 0
+    },
     title:{
         type:String,
         required: true

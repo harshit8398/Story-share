@@ -23,3 +23,21 @@ footer{
 #delete-form{
     display:inline;
 }
+
+thead,tr{
+	background:lightgray;
+}
+
+.card{
+	border: solid 1px lightgray;
+	border-radius: 4px;
+}
+
+.comment-body{
+    font-size: 14px;
+    font-weight:500;
+}
+
+.likes{
+    height: 368px;    
+}

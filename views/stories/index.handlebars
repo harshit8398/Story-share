@@ -2,12 +2,12 @@
 <div class="row">
     {{#each stories}}
         <div class="col s12 m4">
-            <div class="card">
+            <div class="card story likes">
+                {{#if ../user}}
                 <div class="card-image">
-                    {{#if user}}
                         {{{editIcon user.id ../user.id id}}}
-                    {{/if}}
                 </div>
+                {{/if}}
                 <div class="card-content center-align">
                     <h5>{{truncate title 15}}</h5>
                     <p class="story-text">{{ stripTags (truncate body 100)}}</p>
@@ -20,8 +20,11 @@
                     </div>
                 </div>
                 <div class="card-action center-align">
-                    <a class="btn grey" href="/stories/show/{{id}}">Read More</a>
+                    <a class="btn red" href="/stories/show/{{id}}">Read More</a>
                 </div>
+                    {{#if likes}}
+                    <b style="margin-left:4px"><i class="fa fa-thumbs-up"></i> {{likes}} likes</b>
+                    {{/if}}
             </div>
         </div>
     {{else}}

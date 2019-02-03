@@ -30,5 +30,19 @@ module.exports = {
         } else {
             return '';
         }
-    }
+    },
+    liked: function(found,storyId){
+                
+                if(found == 'private'|| found == 'logged_out')
+                {
+                    return '';
+                }    
+                else if(found)
+                {   
+                    return `<button onclick="dislike()" class="btn-floating btn-large halfway-fab red"><i class="fa fa-thumbs-down"></i></button>`;
+                }
+                else{
+                    return `<button onclick="like()" class="btn-floating btn-large halfway-fab red"><i class="fa fa-thumbs-up"></i></button>`;
+                }  
+            }    
 }

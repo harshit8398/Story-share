@@ -7,42 +7,60 @@
             <div class="card-content">
                 <span class="card-title">{{formatDate story.date 'MMMM Do YYYY'}}</span>
                 {{{story.body}}}
+                <br/>
+                
+                <p id="like-number">
+                    {{#if story.likes}}
+                     <i class="fa fa-thumbs-up"></i> {{story.likes}} likes 
+                    {{/if}}
+                </p>
+                
             </div>
+            {{#if user}}
+            <div id="like-div" class="card-image">
+                {{{liked found story.id}}}
+            </div>   
+            {{/if}}  
         </div>
+        
+        <br/>
 
         {{#if story.allowComments}}
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title">Comments</span>
+                    <span class="card-title"></span>
                     {{#if user}}
-                        <form method="post" action="/stories/comment/{{story.id}}">
+
                             <div class="input-field">
-                                <textarea name="commentBody" class="materialize-textarea"></textarea>
+                                <textarea id="comment" class="materialize-textarea" rows="3"></textarea>
                                 <label> Add Comment</label>
                             </div>
-                            <input type="submit" value="Submit" class="btn">
-                        </form>
+                            <button type="submit" id="send" class="btn"> 
+                                <i class="fa fa-arrow-circle-right"></i> submit
+                            </button>
+
                     {{else}}
-                        <p>Please <a href="/auth/google">log</a> in to leave a comment</p>
+                        <p>Please <a href="/auth/google">Log in</a> to leave a comment</p>
                     {{/if}}
                 </div>
-            </div>
-
+            </div>            
+            <h5>Comments <i class="fa fa-comments"></i></h5>
+            <div id="comments">
             {{#each story.comments}}
                 <div class="card">
                     <div class="card-content">
-                        <h5>{{commentBody}}</h5>
                         <div class="chip">
                             <img src="{{commentUser.image}}">
                             <a href="/stories/user/{{commentUser.id}}">
                                 {{commentUser.firstName}} {{commentUser.lastName}}
                             </a>
                         </div>
+                        <span class="comment-body">{{commentBody}}</span>
                         <br>
-                        <small>Posted: {{formatDate commentDate 'MMMM Do YYYY'}}</small>
-                    </div>
+                    </div>  
                 </div>
-            {{/each}}
+            {{/each}} 
+            </div>  
         {{/if}}
     </div>
 
@@ -58,3 +76,12 @@
         </div>
     </div>
 </div>
+
+<input type="hidden" id="storyId" value={{story.id}}>
+<input type="hidden" id="userId" value={{user.id}}>
+<input type="hidden" id="userImage" value={{user.image}}>
+<input type="hidden" id="firstName" value={{user.firstName}}>
+<input type="hidden" id="lastName" value={{user.lastName}}>
+
+<script type="text/javascript" src="/javascripts/comments.js"></script>
+<script type="text/javascript" src="/javascripts/likes.js"></script>

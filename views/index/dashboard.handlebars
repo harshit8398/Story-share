@@ -4,6 +4,7 @@
     <table class="striped">
         <thead>
         <tr>
+            <th></th>
             <th>Title</th>
             <th>Date</th>
             <th>Status</th>
@@ -13,9 +14,10 @@
         <tbody>
         {{#each stories}}
             <tr>
-                <td><a href="/stories/show/{{id}}">{{title}}</a></td>
-                <td>{{formatDate date 'MMMM Do YYYY'}}</td>
-                <td><span class="dash-status">{{status}}</span></td>
+                <td></td>
+                <td><b><a href="/stories/show/{{id}}">{{title}}</a></b></td>
+                <td><b>{{formatDate date 'MMMM Do YYYY'}}</b></td>
+                <td><span class="dash-status"><b>{{status}}</b></span></td>
                 <td>
                     <a class="btn left-align" href="/stories/edit/{{id}}"><i class="fa fa-pencil"></i> Edit</a>
                     <form action="/stories/{{id}}?_method=DELETE" method="post" id="delete-form">
@@ -27,6 +29,11 @@
         {{/each}}
         </tbody>
     </table>
+    <br/>
 {{else}}
     <p>You have not created any stories yet</p>
 {{/if}}
+
+<a class="btn red" href="/stories/add"><i class="fa fa-plus"></i> Create new stories</a>
+
+

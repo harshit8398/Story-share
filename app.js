@@ -10,6 +10,7 @@ const methodOverride = require('method-override');
 
 require('./models/User');
 require('./models/Story');
+require('./models/Likes')
 
 require('./config/passport')(passport);
 
@@ -23,7 +24,8 @@ const {
     stripTags,
     formatDate,
     select,
-    editIcon
+    editIcon,
+    liked
 } = require('./helpers/hbs');
 
 
@@ -48,7 +50,8 @@ app.engine('handlebars', exphbs({
       stripTags:stripTags,
       formatDate:formatDate,
       select:select,
-        editIcon:editIcon
+      editIcon:editIcon,
+      liked:liked
     },
     defaultLayout: 'main'}));
 
@@ -64,10 +67,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req,res,next)=>{
+ app.use((req,res,next)=>{
     res.locals.user = req.user || null;
     next();
 });
+
 
 
 app.use(express.static(path.join(__dirname,'public')));

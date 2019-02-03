@@ -3,6 +3,8 @@ const router = express.Router();
 const {ensureAuthenticated, ensureGuest} = require('../helpers/auth');
 const mongoose = require('mongoose');
 const Story = mongoose.model('stories');
+const User = mongoose.model('users');
+const Likes = mongoose.model('likes');
 
 router.get('/', (req, res) => {
     Story.find({status:'public'})
@@ -80,21 +82,40 @@ router.post('/', (req, res) => {
 });
 
 router.get('/show/:id', (req, res) => {
+    storyId = req.params.id;
     Story.findOne({
-        _id: req.params.id
+        _id: storyId
     })
         .populate('user')
         .populate('comments.commentUser')
         .then(story => {
+
             if(story.status == 'public'){
-                res.render('stories/show', {
-                    story:story
-                });
-            } else {
+                if(req.user)
+               {     
+                 Likes.findOne(
+                {
+                   $and:[{userId:req.user.id},{storyId:storyId}] 
+                })
+                .then(like=>{
+                    let found = false;
+                    if(like)
+                    {
+                       found = true;
+                    }
+                      res.render('stories/show', {story:story,found:found})
+                    })
+                }
+                else{
+                    res.render('stories/show',{story:story,found:'logged_out'})
+                }
+            }
+                        
+             else {
                 if(req.user){
                     if(req.user.id == story.user._id){
                         res.render('stories/show', {
-                            story:story
+                            story:story,found:'private'
                         });
                     } else {
                         res.redirect('/stories');
@@ -122,10 +143,10 @@ router.put('/:id',(req,res)=>{
             story.allowComments = allowComments;
 
             story.save()
-                .then(story=>{
-                    res.redirect('/dashboard');
-                })
-        });
+        })
+        .then(()=>{
+                res.redirect('/dashboard');
+        })
 });
 
 
@@ -134,28 +155,70 @@ router.delete('/:id',(req,res)=>{
            .then(()=>{
              res.redirect('/dashboard');
            });
-    });
+});
 
-
-router.post('/comment/:id', (req, res) => {
-    Story.findOne({
-        _id: req.params.id
-    })
-        .then(story => {
-            const newComment = {
+router.post('/addComment', (req, res) => {
+    
+        const newComment = {
                 commentBody: req.body.commentBody,
                 commentUser: req.user.id
             }
-
-            // Add to comments array
-            story.comments.push(newComment);
-
+        
+        Story.findOne({
+            _id: req.body.storyId
+        })    
+        .then(story=>{
+            story.comments.push(newComment)
             story.save()
-                .then(story => {
-                    res.redirect(`/stories/show/${story.id}`);
-                });
-        });
-});
+        })
+        .then(()=>{
+          res.send({val:true})  
+        })
+        .catch(err=>{
+            console.log('error')
+        })
+});        
 
+router.post('/like',(req,res)=>{
+    const likes = {
+                    userId:req.user.id,
+                    storyId:req.body.storyId
+                  } 
+
+        new Likes(likes)
+        .save()
+        .then(()=>{
+            return Story.findOne({_id:req.body.storyId})
+        })
+        .then(story=>{
+            story.likes += 1;
+            return story.save()
+        })    
+        .then((story)=>{ 
+            res.send({liked:true,likeNumber:story.likes})
+        })
+        .catch(err=>{console.log(err)})
+})       
+
+router.post('/dislike',(req,res)=>{
+    
+    Likes.remove(
+        {
+          $and:[{userId:req.user.id},{storyId:req.body.storyId}]  
+        }
+        )
+        .then(()=>{
+                return Story.findOne({_id:req.body.storyId})
+            })
+        .then(story=>{
+                story.likes -= 1;
+                return story.save()
+        })
+        .then((story)=>{
+            res.send({disliked:true,likeNumber:story.likes})
+        })
+        .catch(err=>{console.log(err)})    
+})  
 
 module.exports = router;
+
