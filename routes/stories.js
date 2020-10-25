@@ -151,7 +151,7 @@ router.put('/:id',(req,res)=>{
 
 
 router.delete('/:id',(req,res)=>{
-       Story.remove({_id:req.params.id})
+       Story.deleteOne({_id:req.params.id})
            .then(()=>{
              res.redirect('/dashboard');
            });
@@ -202,7 +202,7 @@ router.post('/like',(req,res)=>{
 
 router.post('/dislike',(req,res)=>{
     
-    Likes.remove(
+    Likes.deleteOne(
         {
           $and:[{userId:req.user.id},{storyId:req.body.storyId}]  
         }

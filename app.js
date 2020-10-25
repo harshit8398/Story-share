@@ -8,6 +8,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
+const Handlebars = require('handlebars')
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+
+
 require('./models/User');
 require('./models/Story');
 require('./models/Likes')
@@ -31,9 +35,7 @@ const {
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(keys.mongoURI,{
-   useMongoClient:true
-})
+mongoose.connect(keys.mongoURI,{useNewUrlParser:true,useUnifiedTopology: true})
     .then(() => console.log('MongoDB Connected'))
     .catch((err) => console.log(err));
 
@@ -45,6 +47,7 @@ app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
 app.engine('handlebars', exphbs({
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
     helpers:{
       truncate:truncate,
       stripTags:stripTags,
@@ -53,7 +56,8 @@ app.engine('handlebars', exphbs({
       editIcon:editIcon,
       liked:liked
     },
-    defaultLayout: 'main'}));
+    defaultLayout: 'main'
+}));
 
 app.set('view engine', 'handlebars');
 
